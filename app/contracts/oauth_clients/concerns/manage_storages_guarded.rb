@@ -26,19 +26,22 @@
 # See COPYRIGHT and LICENSE files for more details.
 #++
 
-OpenProject::Application.routes.draw do
-  namespace :admin do
-    namespace :settings do
-      resources :storages, controller: '/storages/admin/storages' do
-        resource :oauth_client, controller: '/storages/admin/oauth_clients', only: %i[new create]
-      end
-    end
-  end
+module OAuthClients
+  module Concerns
+    module ManageStoragesGuarded
+      extend ActiveSupport::Concern
 
-  scope 'projects/:project_id', as: 'project' do
-    namespace 'settings' do
-      resources :projects_storages, controller: '/storages/admin/projects_storages',
-                                    except: %i[show update]
+      included do
+        validate :validate_user_allowed_to_manage
+
+        private
+
+        def validate_user_allowed_to_manage
+          unless user.admin? && user.active?
+            errors.add :base, :error_unauthorized
+          end
+        end
+      end
     end
   end
 end

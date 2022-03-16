@@ -26,19 +26,24 @@
 # See COPYRIGHT and LICENSE files for more details.
 #++
 
-OpenProject::Application.routes.draw do
-  namespace :admin do
-    namespace :settings do
-      resources :storages, controller: '/storages/admin/storages' do
-        resource :oauth_client, controller: '/storages/admin/oauth_clients', only: %i[new create]
-      end
-    end
-  end
+module OAuthClients
+  class CreateContract < ::ModelContract
+    include ActiveModel::Validations
+    include Concerns::ManageStoragesGuarded
 
-  scope 'projects/:project_id', as: 'project' do
-    namespace 'settings' do
-      resources :projects_storages, controller: '/storages/admin/projects_storages',
-                                    except: %i[show update]
-    end
+    include ::OAuthClients::Concerns::ManageStoragesGuarded
+    include ActiveModel::Validations
+
+    attribute :client_id, writable: true
+    validates :client_id, presence: true, length: { maximum: 255 }
+
+    attribute :client_secret, writable: true
+    validates :client_secret, presence: true, length: { maximum: 255 }
+
+    attribute :integration_type, writable: true
+    validates :integration_type, presence: true
+
+    attribute :integration_id, writable: true
+    validates :integration_id, presence: true
   end
 end
