@@ -35,7 +35,7 @@ module OAuthClients
     attr_reader :rack_token
     attr_reader :oauth_client
 
-    def initialize(user, oauth_client)
+    def initialize(user:, oauth_client:)
       @user = user
       @oauth_client = oauth_client
     end
@@ -43,22 +43,11 @@ module OAuthClients
     # Main method to initiate the OAuth2 flow called by a "client" page
     # that wants to access OAuth2 protected resources.
     # Returns an OAuthClientToken object or a String in case a renew is required.
+    # ToDo: @Frank: I believe we do not need the "state" param here
     def get_access_token(state)
-
       # Check for an already existing token from last call
-      @token = get_existing_token
-      if token.present?
-        # Check if the token has expired already
-        # Leave a few seconds reserve and renew before the actual expiry
-        #if token.updated_at + token.oauth_expires_in.seconds < Time.zone.now - 60.seconds
-          # So the token has expired already. Start the renew workflow.
-          # token = renew_token(token, state)
-          # token = refresh_token(token, state)
-          # ToDo: Check token for validity (or issues during renew)
-        #end
-
-        ServiceResult.new(success: true, result: token)
-      end
+      token = get_existing_token
+      return ServiceResult.new(success: true, result: token) if token.present?
 
       # ToDo: Check that we've got valid oauth_client with valid OAuth2 params
       # and otherwise return a suitable error
@@ -67,7 +56,7 @@ module OAuthClients
 
       # Return a String with a redirect URL to Nextcloud instead of a token
       @redirect_url = redirect_to_oauth_authorize(state)
-      ServiceResult.new(success: false, result: nil)
+      ServiceResult.new(success: false, result: @redirect_url)
     end
 
     # Check if a token already exists and return nil otherwise

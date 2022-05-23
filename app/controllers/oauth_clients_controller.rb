@@ -52,10 +52,10 @@ class OAuthClientsController < ApplicationController
     end
 
     # Start the OAuth2 manager that will handle all the rest
-    connection_manager = OAuthClients::ConnectionManager.new(User.current)
+    connection_manager = OAuthClients::ConnectionManager.new(user: User.current, oauth_client: @oauth_client)
 
     # Exchange the code with a token using a HTTP call to the OAuth2 provider
-    user_token = connection_manager.code_to_token(@oauth_client, code)
+    user_token = connection_manager.code_to_token(code)
 
     # Redirect the user to the page that initially wanted to access the OAuth2 resource.
     # "state" is a variable that encapsulates the page's URL and status.

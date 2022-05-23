@@ -26,39 +26,11 @@
 # See COPYRIGHT and LICENSE files for more details.
 #++
 
-require 'spec_helper'
-
-describe ::OAuthClients::ConnectionManager, type: :model do
-  let(:current_user) { create :user }
-  let(:oauth_client) { create :oauth_client }
-  let(:oauth_client_token) do
-    create(:oauth_client_token,
-           user: current_user,
-           oauth_client: oauth_client)
-  end
-  let(:instance) { described_class.new(user: current_user, oauth_client: oauth_client) }
-  let(:state) { "/some_url_the_user_came_from" }
-
-  describe '#get_access_token' do
-    subject { instance.get_access_token(state) }
-
-    context 'with an OAuthClientToken present' do
-      before do
-        oauth_client_token
-      end
-
-      it 'returns the OAuthClientToken' do
-        expect(subject.success?).to be_truthy
-        expect(subject.result).to be_a OAuthClientToken
-      end
-    end
-
-    context 'without an OAuthClientToken present' do
-      it 'returns the redirect URL' do
-        expect(subject.success?).to be_falsey
-        expect(subject.result).to be_a String
-        expect(subject.result).to include oauth_client.integration.host
-      end
-    end
+FactoryBot.define do
+  factory :oauth_client_token, class: '::OAuthClientToken' do
+    sequence(:access_token) { |n| "1234567890-#{n}" }
+    sequence(:refresh_token) { |n| "2345678901-#{n}" }
+    oauth_client factory: :oauth_client
+    user factory: :user
   end
 end
