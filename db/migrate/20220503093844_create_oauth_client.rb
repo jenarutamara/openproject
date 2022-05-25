@@ -32,7 +32,7 @@ class CreateOAuthClient < ActiveRecord::Migration[6.1]
       t.string :client_id, null: false
       t.string :client_secret, null: false
       t.references :integration,
-                   polymorphic: true, index: { unique: true }
+                   polymorphic: true, index: { unique: true }, null: false
 
       t.timestamps
     end

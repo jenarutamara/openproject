@@ -29,9 +29,6 @@
 module OAuthClients
   class CreateContract < ::ModelContract
     include ActiveModel::Validations
-    include Concerns::ManageStoragesGuarded
-
-    include ::OAuthClients::Concerns::ManageStoragesGuarded
     include ActiveModel::Validations
 
     attribute :client_id, writable: true
@@ -45,5 +42,15 @@ module OAuthClients
 
     attribute :integration_id, writable: true
     validates :integration_id, presence: true
+
+    validate :validate_user_allowed
+
+    private
+
+    def validate_user_allowed
+      unless user.admin? && user.active?
+        errors.add :base, :error_unauthorized
+      end
+    end
   end
 end

@@ -51,7 +51,8 @@ class Storages::Storage < ApplicationRecord
   has_many :projects_storages, dependent: :destroy, class_name: 'Storages::ProjectStorage'
   # We can get the list of projects with this Storage enabled.
   has_many :projects, through: :projects_storages
-  # A storage authenticates at a storage via OAuth.
+  # The OAuth client credentials that OpenProject will use to obtain user specific
+  # access tokens from the storage server, i.e a Nextcloud serer.
   has_one :oauth_client, as: :integration, dependent: :destroy
 
   PROVIDER_TYPES = [
