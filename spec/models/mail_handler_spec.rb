@@ -486,7 +486,7 @@ describe MailHandler, type: :model do
         it 'does not result in an error email response' do
           subject # send email
 
-          expect(UserMailer).to_not have_received(:incoming_email_error)
+          expect(UserMailer).not_to have_received(:incoming_email_error)
         end
       end
 
