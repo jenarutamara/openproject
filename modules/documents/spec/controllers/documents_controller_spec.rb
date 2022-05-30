@@ -26,7 +26,7 @@
 # See COPYRIGHT and LICENSE files for more details.
 #++
 
-require File.dirname(__FILE__) + '/../spec_helper'
+require "#{File.dirname(__FILE__)}/../spec_helper"
 
 describe DocumentsController do
   render_views
@@ -58,8 +58,7 @@ describe DocumentsController do
         Proin sollicitudin elementum quam quis pharetra.\
         Aenean facilisis nunc quis elit volutpat mollis.\
         Aenean eleifend varius euismod. Ut dolor est, congue eget dapibus eget, elementum eu odio.\
-        Integer et lectus neque, nec scelerisque nisi. EndOfLineHere
-
+        Integer et lectus neque, nec scelerisque nisi.
         Praesent a nunc lorem, ac porttitor eros.
       LOREM
     end
@@ -80,8 +79,7 @@ describe DocumentsController do
     end
 
     it "renders documents with long descriptions properly" do
-      expect(response.body).to have_selector('.wiki', visible: :all)
-      expect(response.body).to have_selector('.wiki', visible: :all, text: "#{document.description[0..249]}...")
+      expect(response.body).to have_selector('.wiki', visible: :all, text: document.description)
     end
   end
 
@@ -149,7 +147,7 @@ describe DocumentsController do
       it "adds an attachment" do
         document = Document.last
 
-        expect(document.attachments.count).to eql 1
+        expect(document.attachments.count).to be 1
         attachment = document.attachments.first
         expect(uncontainered.reload).to eql attachment
       end
